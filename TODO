@@ -1,0 +1,10 @@
+class:
+  Node
+  Map de node
+  Pixel
+
+Fct:
+  Distance Euclidienne entre pixel et Node
+  Update
+  Creation image random
+  initialiastion des nodes
