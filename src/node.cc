@@ -2,8 +2,8 @@
 
 Node(enum color c, int x, int y)
 {
-  posX= x;
-  PosY = y;
+  posX = x;
+  posY = y;
   c_ = c;
 }
 
