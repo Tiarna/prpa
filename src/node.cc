@@ -1,79 +1,37 @@
 #include "node.hh"
 
-
-Node(int r, int g, int b)
+Node(enum color c, int x, int y)
 {
-  if (r > 255)
-    R = 255;
-  else if (r < 0)
-    R = 0;
-  else
-    R = r;
-
-  if (g > 255)
-    G = 255;
-  else if (g < 0)
-    G = 0;
-  else
-    G = g;
-
-  if (b > 255)
-    B = 255;
-  else if (b < 0)
-    B = 0;
-  else
-    B = b;
+  posX= x;
+  PosY = y;
+  c_ = c;
 }
 
-int distcarre(Pixel p)
+enum color Node::getColor()
 {
-  int ret = (this.R - p.getR()) * (this.R - p.getR());
-  ret += (this.G - p.getG()) * (this.G - p.getG());
-  ret += (this.B - p.getB()) * (this.B - p.getB());
-  return ret;
+  return c_;
 }
 
-int getR()
+void Node::setColor(enum color c)
 {
-  return R;
+  c_ = c;
+}
+void setX(int x)
+{
+  posX = x;
 }
 
-int getG();
+void setY(int y)
 {
-  return G;
+  posY = y;
 }
 
-int getB()
+int getX()
 {
-  return B
+  return x;
 }
 
-void setR(int r)
+int getY()
 {
-  if (r > 255)
-    R = 255;
-  else if (r < 0)
-    R = 0;
-  else
-    R = r;
-}
-
-void setG(int g)
-{
-  if (g > 255)
-    G = 255;
-  else if (g < 0)
-    G = 0;
-  else
-    G = g;
-}
-
-void setB(int b)
-{
-  if (b > 255)
-    B = 255;
-  else if (b < 0)
-    B = 0;
-  else
-    B = b;
+  return y;
 }

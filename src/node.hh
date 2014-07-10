@@ -7,22 +7,25 @@ class Node
 {
   public:
 
-    Node(int r, int g, int b);
+    Node(enum color c, int x, int y);
+    Node(Pixel p, int x, int y);
 
     int distcarre(Pixel p);
 
-    int getR();
-    int getG();
-    int getB();
+    enum color getColor();
 
-    void setR(int r);
-    void setG(int g);
-    void setB(int b);
+    void setColor(enum color c);
+
+    void setX(int x);
+    void setY(int y);
+
+    int getX();
+    int getY();
 
   private:
-    int R;
-    int G;
-    int B;
+    enum color c_;
+    int posX;
+    int posY;
 };
 
 #endif
