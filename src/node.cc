@@ -1,9 +1,9 @@
 #include "node.hh"
 
-Node(enum color c, int x, int y)
+Node::Node(enum color c, int x, int y)
 {
   posX= x;
-  PosY = y;
+  posY = y;
   c_ = c;
 }
 
@@ -16,22 +16,22 @@ void Node::setColor(enum color c)
 {
   c_ = c;
 }
-void setX(int x)
+void Node::setX(int x)
 {
   posX = x;
 }
 
-void setY(int y)
+void Node::setY(int y)
 {
   posY = y;
 }
 
-int getX()
+int Node::getX()
 {
-  return x;
+  return posX;
 }
 
-int getY()
+int Node::getY()
 {
-  return y;
+  return posY;
 }

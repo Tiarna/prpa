@@ -1,8 +1,8 @@
 CXX?=g++
 CPPFLAGS=-I/usr/local/include -Isrc
-CXXFLAGS=-Werror -Wall -pedantic -Wextra -std=c++11 -O3
+CXXFLAGS=-Werror -Wall -pedantic -Wextra -std=c++11 -g3
 BIN=prpa
-SRC=
+SRC=src/main.cc src/node.cc src/pixel.cc
 OBJ=$(SRC:.cc=.o)
 LOGIN=morle_g
 TARPREFIX=--prefix=$(LOGIN)-$(BIN)/
