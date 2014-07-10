@@ -19,7 +19,7 @@ leak: $(BIN)
 	valgrind --leak-check=full --show-reachable=yes ./$(BIN) $(CHKIN)
 
 clean:
-	rm -f $(BIN) $(OBJ) $(BIN).core
+	rm -f $(BIN) $(OBJ) $(BIN).core src/*.orig
 
 export: clean
 	git archive HEAD $(TARPREFIX) | bzip2 > $(TARBALL)
