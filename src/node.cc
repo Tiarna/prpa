@@ -2,7 +2,7 @@
 
 Node::Node(enum color c, int x, int y)
 {
-  posX= x;
+  posX = x;
   posY = y;
   c_ = c;
 }
