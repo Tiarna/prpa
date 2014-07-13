@@ -1,31 +1,29 @@
 #ifndef NODE_HH
 # define NODE_HH
 
-# include "pixel.hh"
+# include <stdlib.h>
+# include <vector>
+# include <SDL/SDL.h>
+# include <SDL/SDL_image.h>
 
 class Node
 {
   public:
 
-    Node(enum color c, int x, int y);
-    Node(Pixel p, int x, int y);
+    Node(int r, int g, int b);
 
-    int distcarre(Pixel p);
+    int getR();
+    int getG();
+    int getB();
 
-    enum color getColor();
-
-    void setColor(enum color c);
-
-    void setX(int x);
-    void setY(int y);
-
-    int getX();
-    int getY();
+    void setR(int r);
+    void setG(int g);
+    void setB(int b);
 
   private:
-    enum color c_;
-    int posX;
-    int posY;
+    int R;
+    int G;
+    int B;
 };
 
 #endif

@@ -1,54 +1,17 @@
-#include <map>
-#include "node.hh"
-#include <stdlib.h>
-#include <vector>
-#include <SDL/SDL.h>
+#include "main.hh"
 
-std::vector<Node> init_node(std::vector<Pixel> vec, int width, int height)
+std::vector<Node> init_node(int width, int height)
 {
   std::vector<Node> ret;
-  bool test[16];
-  for (int i = 0; i < 16; i++)
-  {
-    test[i] = true;
-  }
-
-  int count = 0;
-
+  int r, g, b;
   for (int i = 0; i < width; i++)
   {
     for (int j = 0; j < height; j++)
     {
-      for (int k = 0; k < 16; k++)
-      {
-        if (test[k] && vec[i * j + j].getColor() ==  (enum color)k)
-        {
-          ret.push_back(Node((enum color)k, i, j));
-          test[k] = false;
-          count++;
-          if (count == 15)
-          {
-            k = 42;
-            i = width + 1;
-            j = height + 1;
-          }
-        }
-      }
-    }
-  }
-  return ret;
-}
-
-std::vector<Pixel> init_pixels(int width, int height)
-{
-  std::vector<Pixel> ret;
-  enum color col;
-  for (int i = 0; i < width; i++)
-  {
-    for (int j = 0; j < height; j++)
-    {
-      col = (enum color)(rand() % 16);
-      ret.push_back(Pixel(col));
+      r = rand() % 256;
+      g = rand() % 256;
+      b = rand() % 256;
+      ret.push_back(Node(r, g, b));
     }
   }
   return ret;
@@ -70,12 +33,43 @@ void pause()
   }
 }
 
-void display(std::vector<Pixel> vecPix, int width, int height)
+void display(std::vector<Node> vec, int width, int height)
 {
-  vecPix = vecPix;
+  vec = vec;
+  SDL_Surface *ecran = NULL;
   SDL_Init(SDL_INIT_VIDEO);
-  SDL_SetVideoMode(width, height, 32, SDL_HWSURFACE);
+  ecran = SDL_SetVideoMode(width, height, 32, SDL_HWSURFACE);
+
+  SDL_Rect position;
+  position.x = 0;
+  position.y = 0;
+
+  int dim = height * width;
+
+  SDL_Surface *pix[dim];
+
+  for (int i = 0; i < width * height; i++)
+  {
+    *pix[dim] = {NULL};
+    pix[i] = SDL_CreateRGBSurface(SDL_HWSURFACE, 1, 1, 32, 0, 0, 0, 0);
+  }
+
+  SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
+
+  for (int i = 0; i < width; i++)
+  {
+    for(int j = 0; j < height; j++)
+    {
+      position.x = i;
+      position.y = j;
+      SDL_FillRect(pix[i * j + j], NULL, SDL_MapRGB(ecran->format, vec[i * j + j].getR(), vec[i * j + j].getG(), vec[i * j + j].getB()));
+      SDL_BlitSurface(pix[i * j + j], NULL, ecran, &position);
+    }
+  }
+  SDL_Flip(ecran);
   pause();
+  for (int i = 0 ; i < width * height; i++) // N'oubliez pas de libérer les 256 surfaces
+            SDL_FreeSurface(pix[i]);
   SDL_Quit();
 }
 
@@ -83,7 +77,6 @@ int main(int argc, char** argv)
 {
   argc = argc;
   argv = argv;
-  std::vector<Pixel> vecPix = init_pixels(42, 42);
-  std::vector<Node> vecNode = init_node(vecPix, 42, 42);
-  display(vecPix, 42, 42);
+  std::vector<Node> vecNode = init_node(100, 100);
+  display(vecNode, 100, 100);
 }

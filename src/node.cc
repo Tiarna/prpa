@@ -1,37 +1,72 @@
 #include "node.hh"
 
-Node::Node(enum color c, int x, int y)
+
+Node::Node(int r, int g, int b)
 {
-  posX = x;
-  posY = y;
-  c_ = c;
+  if (r > 255)
+    R = 255;
+  else if (r < 0)
+    R = 0;
+  else
+    R = r;
+
+  if (g > 255)
+    G = 255;
+  else if (g < 0)
+    G = 0;
+  else
+    G = g;
+
+  if (b > 255)
+    B = 255;
+  else if (b < 0)
+    B = 0;
+  else
+    B = b;
 }
 
-enum color Node::getColor()
+
+int Node::getR()
 {
-  return c_;
+  return R;
 }
 
-void Node::setColor(enum color c)
+int Node::getG()
 {
-  c_ = c;
-}
-void Node::setX(int x)
-{
-  posX = x;
+  return G;
 }
 
-void Node::setY(int y)
+int Node::getB()
 {
-  posY = y;
+  return B;
 }
 
-int Node::getX()
+void Node::setR(int r)
 {
-  return posX;
+  if (r > 255)
+    R = 255;
+  else if (r < 0)
+    R = 0;
+  else
+    R = r;
 }
 
-int Node::getY()
+void Node::setG(int g)
 {
-  return posY;
+  if (g > 255)
+    G = 255;
+  else if (g < 0)
+    G = 0;
+  else
+    G = g;
+}
+
+void Node::setB(int b)
+{
+  if (b > 255)
+    B = 255;
+  else if (b < 0)
+    B = 0;
+  else
+    B = b;
 }
