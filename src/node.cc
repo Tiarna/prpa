@@ -1,6 +1,5 @@
 #include "node.hh"
 
-
 Node::Node(int r, int g, int b)
 {
   if (r > 255)
@@ -25,6 +24,13 @@ Node::Node(int r, int g, int b)
     B = b;
 }
 
+int Node::dist2(Uint8 r, Uint8 g, Uint8 b)
+{
+  int rR = ((int)r - R) * ((int)r - R);
+  int gG = ((int)g - G) * ((int)g - G);
+  int bB = ((int)b - B) * ((int)b - B);
+  return rR + gG + bB;
+}
 
 int Node::getR()
 {

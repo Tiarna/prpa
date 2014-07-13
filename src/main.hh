@@ -3,5 +3,6 @@
 
 # include "node.hh"
 # include <iostream>
+# include "random_suite.hh"
 
 #endif

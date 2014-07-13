@@ -12,6 +12,8 @@ class Node
 
     Node(int r, int g, int b);
 
+    int dist2(Uint8 r, Uint8 g, Uint8 b);
+
     int getR();
     int getG();
     int getB();
