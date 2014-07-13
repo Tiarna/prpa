@@ -1,5 +1,36 @@
 #include "main.hh"
 
+Uint32 getpixel(SDL_Surface *surface, int x, int y)
+{
+  int bpp = surface->format->BytesPerPixel;
+  /* Here p is the address to the pixel we want to retrieve */
+  Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+
+  switch(bpp) {
+    case 1:
+      return *p;
+      break;
+
+    case 2:
+      return *(Uint16 *)p;
+      break;
+
+    case 3:
+      if(SDL_BYTEORDER == SDL_BIG_ENDIAN)
+        return p[0] << 16 | p[1] << 8 | p[2];
+      else
+        return p[0] | p[1] << 8 | p[2] << 16;
+      break;
+
+    case 4:
+      return *(Uint32 *)p;
+      break;
+
+    default:
+      return 0;       /* shouldn't happen, but avoids warnings */
+  }
+}
+
 std::vector<Node> init_node(int width, int height)
 {
   std::vector<Node> ret;
@@ -68,15 +99,51 @@ void display(std::vector<Node> vec, int width, int height)
   }
   SDL_Flip(ecran);
   pause();
-  for (int i = 0 ; i < width * height; i++) // N'oubliez pas de libérer les 256 surfaces
-            SDL_FreeSurface(pix[i]);
+  for (int i = 0 ; i < width * height; i++)
+    SDL_FreeSurface(pix[i]);
   SDL_Quit();
+}
+
+std::vector<Node> calculate(char* file, std::vector<Node> vec, int width, int height)
+{
+  SDL_Surface *img = NULL;
+  SDL_Init(SDL_INIT_VIDEO);
+  img = SDL_LoadBMP(file);
+
+
+  Uint32 current_pix = 0;
+
+  Uint8 r = 0;
+  Uint8 g = 0;
+  Uint8 b = 0;
+
+  for (int i = 0; i < width; i++)
+  {
+    for (int j = 0; j < height; j++)
+    {
+      current_pix = getpixel(img, i, j);
+      SDL_GetRGB(current_pix, NULL, &r, &g, &b);
+    }
+  }
+  return vec;
+
 }
 
 int main(int argc, char** argv)
 {
-  argc = argc;
-  argv = argv;
-  std::vector<Node> vecNode = init_node(100, 100);
-  display(vecNode, 100, 100);
+  if (argc != 4)
+  {
+    std::cout << "using: Filename dimx dimy" << std::endl;
+    return 1;
+  }
+
+  int width = atoi(argv[2]);
+
+  int height = atoi(argv[3]);
+
+  std::vector<Node> vecNode = init_node(width, height);
+
+  vecNode = calculate(argv[1], vecNode, width, height);
+
+  display(vecNode, width, height);
 }
