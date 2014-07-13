@@ -142,7 +142,8 @@ std::vector<Node> calculate(char* file, std::vector<Node> vec, int width, int he
     current_pix = getpixel(img, vecint[i] / height, vecint[i] % height);
     SDL_GetRGB(current_pix, NULL, &r, &g, &b);
     bestfit = search_closer(r, g, b, vec);
-
+    // update here
+    update(width, height, bestfit, current_pix, vec);
   }
   return vec;
 }
