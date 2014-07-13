@@ -2,6 +2,7 @@
 #include "node.hh"
 #include <stdlib.h>
 #include <vector>
+#include <SDL/SDL.h>
 
 std::vector<Node> init_node(std::vector<Pixel> vec, int width, int height)
 {
@@ -53,10 +54,36 @@ std::vector<Pixel> init_pixels(int width, int height)
   return ret;
 }
 
+void pause()
+{
+  int continuer = 1;
+  SDL_Event event;
+
+  while (continuer)
+  {
+    SDL_WaitEvent(&event);
+    switch(event.type)
+    {
+      case SDL_QUIT:
+        continuer = 0;
+    }
+  }
+}
+
+void display(std::vector<Pixel> vecPix, int width, int height)
+{
+  vecPix = vecPix;
+  SDL_Init(SDL_INIT_VIDEO);
+  SDL_SetVideoMode(width, height, 32, SDL_HWSURFACE);
+  pause();
+  SDL_Quit();
+}
+
 int main(int argc, char** argv)
 {
   argc = argc;
   argv = argv;
   std::vector<Pixel> vecPix = init_pixels(42, 42);
   std::vector<Node> vecNode = init_node(vecPix, 42, 42);
+  display(vecPix, 42, 42);
 }

@@ -1,6 +1,6 @@
 CXX?=g++
 CPPFLAGS=-I/usr/local/include -Isrc
-CXXFLAGS=-Werror -Wall -pedantic -Wextra -std=c++11 -g3
+CXXFLAGS=-Werror -Wall -pedantic -Wextra -std=c++11 -g3 `sdl-config --cflags` `pkg-config --cflags --libs SDL_image``pkg-config --cflags --libs SDL_mixer`
 BIN=prpa
 SRC=src/main.cc src/node.cc src/pixel.cc
 OBJ=$(SRC:.cc=.o)
