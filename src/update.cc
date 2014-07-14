@@ -75,7 +75,7 @@ static void change_neighbour(int bestfit, int num_node, Uint8 r_px, Uint8 g_px, 
 
 /*** update function ***/
 
-void update(int width, int height, int bestfit, Uint8 r, Uint8 g, Uint8 b,
+std::vector<Node> update(int width, int height, int bestfit, Uint8 r, Uint8 g, Uint8 b,
     std::vector<Node>& vec)
 {
   change_bestfit(bestfit, r, g, b, vec);
@@ -105,4 +105,6 @@ void update(int width, int height, int bestfit, Uint8 r, Uint8 g, Uint8 b,
 
   if ((bestfit % width != width - 1) && (bestfit / height != height - 1))
     change_neighbour(bestfit, bestfit + width + 1, r, g, b, width, vec);
+
+  return vec;
 }

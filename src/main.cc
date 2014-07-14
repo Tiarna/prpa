@@ -124,14 +124,14 @@ int search_closer(Uint8 r, Uint8 g, Uint8 b, std::vector<Node> vec)
 std::vector<Node> calculate(char* file, std::vector<Node> vec, int width,
                             int height, int iteration_nb)
 {
-  std::cout << "DEBUG main.cc: calculate: begin of fct" << std::endl;
+//  std::cout << "DEBUG main.cc: calculate: begin of fct" << std::endl;
 
   SDL_Surface *img = NULL;
   SDL_Init(SDL_INIT_VIDEO);
   img = SDL_LoadBMP(file);
 
-  std::cout << "DEBUG main.cc: calculate: after image loading"
-            << ". Img vals " << img << std::endl;
+//  std::cout << "DEBUG main.cc: calculate: after image loading"
+//            << ". Img vals " << img << std::endl;
 
   Uint32 current_pix = 0;
 
@@ -143,19 +143,19 @@ std::vector<Node> calculate(char* file, std::vector<Node> vec, int width,
 
   std::vector<int> vecint = get_random_suite(width * height, iteration_nb);
 
-  std::cout << "DEBUG main.cc: calculate: after random vector of pixels"
-            << std::endl;
+//  std::cout << "DEBUG main.cc: calculate: after random vector of pixels"
+//            << std::endl;
 
   for (unsigned int i = 0; i < vecint.size(); i++)
   {
-    std::cout << "iteration number: " << i << " - max iteration: "
-              << iteration_nb << std::endl;
+//    std::cout << "iteration number: " << i << " - max iteration: "
+//              << iteration_nb << std::endl;
 
     current_pix = getpixel(img, vecint[i] / height, vecint[i] % height);
     SDL_GetRGB(current_pix, img->format, &r, &g, &b);
     bestfit = search_closer(r, g, b, vec);
     // begin fixme: allemo_n
-    update(width, height, bestfit, r, g, b, vec);
+    vec = update(width, height, bestfit, r, g, b, vec);
     // end fixme
   }
   return vec;
@@ -176,6 +176,8 @@ int main(int argc, char** argv)
   int iteration_nb = atoi(argv[4]);
 
   std::vector<Node> vecNode = init_node(width, height);
+
+  display(vecNode, width, height);
 
   vecNode = calculate(argv[1], vecNode, width, height, iteration_nb);
 
