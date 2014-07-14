@@ -1,91 +1,118 @@
 # include "update.hh"
 
-void change_color(Node& node, int R, int G, int B)
+
+/*** neighbourhood function ***/
+
+static float dist_nodes(int bestfit, int num_node, int width, int height)
+{
+  int x_bestfit = bestfit % width;
+  int y_bestfit = bestfit / width;
+
+  int x_node = num_node % width;
+  int y_node = num_node / width;
+
+  int delta_x = x_node - x_bestfit;
+  int delta_y = y_node - y_bestfit;
+
+  return sqrt(pow(delta_x, 2) + pow(delta_y, 2));
+}
+
+static float neighbourhood(int bestfit, int num_node, int width, int height)
+{
+  float action_range = 1.0;
+
+  return exp(- dist_nodes(bestfit, num_node, width, height)
+             / (2 * pow(action_range, 2)));
+}
+
+
+/*** change functions ***/
+
+static void change_color(Node& node, int R, int G, int B)
 {
   node.setR(R);
   node.setG(G);
   node.setB(B);
 }
 
-static void change_bestfit(std::vector<Node>& vector, int bestfit,
-    Uint32 current_pix)
+static void change_bestfit(int bestfit, Uint32 current_pix,
+                           std::vector<Node>& vec)
 {
-  Uint8 r = 0;
-  Uint8 g = 0;
-  Uint8 b = 0;
-  SDL_GetRGB(current_pix, NULL, &r, &g, &b);
+  Uint8 r_px = 0;
+  Uint8 g_px = 0;
+  Uint8 b_px = 0;
 
-  change_color(vector[bestfit], r, g, b);
+  SDL_GetRGB(current_pix, NULL, &r_px, &g_px, &b_px);
+
+  change_color(vec[bestfit], r_px, g_px, b_px);
 }
 
-static void change_adj(std::vector<Node>& vector, int bestfit, int adj,
-    Uint32 current_pix)
+static void change_neighbour(int bestfit, int num_node, Uint32 current_pix,
+                             int width, int height, std::vector<Node>& vec)
 {
-  Uint8 r = 0;
-  Uint8 g = 0;
-  Uint8 b = 0;
-  SDL_GetRGB(current_pix, NULL, &r, &g, &b);
+  float learning_rate = 0.15;
 
-  int red = vector[bestfit].getR()
-    + 0.5 * (r -  vector[bestfit].getR());
-  int green = vector[bestfit].getG()
-    + 0.5 * (g -  vector[bestfit].getG());
-  int blue = vector[bestfit].getB()
-    + 0.5 * (b -  vector[bestfit].getB());
+  Uint8 r_px = 0;
+  Uint8 g_px = 0;
+  Uint8 b_px = 0;
 
-  change_color(vector[adj], red, green, blue);
-}
+  SDL_GetRGB(current_pix, NULL, &r_px, &g_px, &b_px);
 
-static void change_far(std::vector<Node>& vector, int bestfit, int far,
-    Uint32 current_pix)
-{
-  Uint8 r = 0;
-  Uint8 g = 0;
-  Uint8 b = 0;
-  SDL_GetRGB(current_pix, NULL, &r, &g, &b);
+  float red = vec[num_node].getR()
+    + learning_rate * neighbourhood(bestfit, num_node, width, height)
+    * (r_px -  vec[num_node].getR());
 
-  int red = vector[bestfit].getR()
-    + 0.25 * (r -  vector[bestfit].getR());
-  int green = vector[bestfit].getG()
-    + 0.25 * (g -  vector[bestfit].getG());
-  int blue = vector[bestfit].getB()
-    + 0.25 * (b -  vector[bestfit].getB());
+  float green = vec[num_node].getG()
+    + learning_rate * neighbourhood(bestfit, num_node, width, height)
+    * (g_px -  vec[num_node].getG());
 
-  change_color(vector[far], red, green, blue);
+  float blue = vec[num_node].getB()
+    + learning_rate * neighbourhood(bestfit, num_node, width, height)
+    * (b_px -  vec[num_node].getB());
+
+  (red < 0.f) ? 0.f : red;
+  (green < 0.f) ? 0.f : green;
+  (blue < 0.f) ? 0.f : blue;
+
+  int r = round(red);
+  int g = round(green);
+  int b = round(blue);
+
+  change_color(vec[num_node], r, g, b);
 }
 
 
 /*** update function ***/
 
 void update(int width, int height, int bestfit, Uint32 current_pix,
-    std::vector<Node>& map)
+    std::vector<Node>& vec)
 {
-  change_bestfit(map, bestfit, current_pix);
+  change_bestfit(bestfit, current_pix, vec);
 
-  /* adjacent neighbours change */
+  // adjacent neighbours change
   if (bestfit % width != 0)
-    change_adj(map, bestfit, bestfit - 1, current_pix);
+    change_neighbour(bestfit, bestfit - 1, current_pix, width, height, vec);
 
   if (bestfit % width != (width - 1))
-    change_adj(map, bestfit, bestfit + 1, current_pix);
+    change_neighbour(bestfit, bestfit + 1, current_pix, width, height, vec);
 
   if (bestfit / height != 0)
-    change_adj(map, bestfit, bestfit - width, current_pix);
+    change_neighbour(bestfit, bestfit - width, current_pix, width, height, vec);
 
   if (bestfit / height != (height - 1))
-    change_adj(map, bestfit, bestfit + width, current_pix);
+    change_neighbour(bestfit, bestfit + width, current_pix, width, height, vec);
 
-  /* far neighbours change */
+  // far neighbours change
   if ((bestfit % width != 0) && (bestfit / height != 0))
-    change_far(map, bestfit, bestfit - width - 1, current_pix);
+    change_neighbour(bestfit, bestfit - width - 1, current_pix, width, height, vec);
 
   if ((bestfit % width != width - 1) && (bestfit / height != 0))
-    change_far(map, bestfit, bestfit - width + 1, current_pix);
+    change_neighbour(bestfit, bestfit - width + 1, current_pix, width, height, vec);
 
   if ((bestfit % width != 0) && (bestfit / height != height - 1))
-    change_far(map, bestfit, bestfit + width - 1, current_pix);
+    change_neighbour(bestfit, bestfit + width - 1, current_pix, width, height, vec);
 
   if ((bestfit % width != width - 1) && (bestfit / height != height - 1))
-    change_far(map, bestfit, bestfit + width + 1, current_pix);
+    change_neighbour(bestfit, bestfit + width + 1, current_pix, width, height, vec);
 
 }
