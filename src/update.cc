@@ -17,12 +17,15 @@ static float dist_nodes(int bestfit, int num_node, int width)
   return sqrt(pow(delta_x, 2) + pow(delta_y, 2));
 }
 
-static float neighbourhood(int bestfit, int num_node, int width)
+static float neighbourhood(int bestfit, int num_node, int width, int height)
 {
-  float action_range = 1.0;
+  float action_range = 0.25 * std::min(width, height);
+
+  //return exp(- dist_nodes(bestfit, num_node, width)
+  //           / (2 * pow(action_range, 2)));
 
   return exp(- dist_nodes(bestfit, num_node, width)
-             / (2 * pow(action_range, 2)));
+             / action_range);
 }
 
 
@@ -35,27 +38,22 @@ static void change_color(Node& node, int R, int G, int B)
   node.setB(B);
 }
 
-static void change_bestfit(int bestfit, Uint8 r_px, Uint8 g_px, Uint8 b_px,
-                           std::vector<Node>& vec)
+static void update_node(int bestfit, int num_node,
+                        Uint8 r_px, Uint8 g_px, Uint8 b_px,
+                        int width, int height, std::vector<Node>& vec)
 {
-  change_color(vec[bestfit], r_px, g_px, b_px);
-}
-
-static void change_neighbour(int bestfit, int num_node, Uint8 r_px, Uint8 g_px, Uint8 b_px,
-                             int width, std::vector<Node>& vec)
-{
-  float learning_rate = 0.15;
+  float learning_rate = 1;
 
   float red = vec[num_node].getR()
-    + learning_rate * neighbourhood(bestfit, num_node, width)
+    + learning_rate * neighbourhood(bestfit, num_node, width, height)
     * (r_px -  vec[num_node].getR());
 
   float green = vec[num_node].getG()
-    + learning_rate * neighbourhood(bestfit, num_node, width)
+    + learning_rate * neighbourhood(bestfit, num_node, width, height)
     * (g_px -  vec[num_node].getG());
 
   float blue = vec[num_node].getB()
-    + learning_rate * neighbourhood(bestfit, num_node, width)
+    + learning_rate * neighbourhood(bestfit, num_node, width, height)
     * (b_px -  vec[num_node].getB());
 
   if (red < 0.f)
@@ -75,36 +73,12 @@ static void change_neighbour(int bestfit, int num_node, Uint8 r_px, Uint8 g_px, 
 
 /*** update function ***/
 
-std::vector<Node> update(int width, int height, int bestfit, Uint8 r, Uint8 g, Uint8 b,
-    std::vector<Node>& vec)
+std::vector<Node> update(int width, int height, int bestfit,
+                         Uint8 r, Uint8 g, Uint8 b,
+                         std::vector<Node>& vec)
 {
-  change_bestfit(bestfit, r, g, b, vec);
-
-  // adjacent neighbours change
-  if (bestfit % width != 0)
-    change_neighbour(bestfit, bestfit - 1, r, g, b, width, vec);
-
-  if (bestfit % width != (width - 1))
-    change_neighbour(bestfit, bestfit + 1, r, g, b, width, vec);
-
-  if (bestfit / height != 0)
-    change_neighbour(bestfit, bestfit - width, r, g, b, width, vec);
-
-  if (bestfit / height != (height - 1))
-    change_neighbour(bestfit, bestfit + width, r, g, b, width, vec);
-
-  // far neighbours change
-  if ((bestfit % width != 0) && (bestfit / height != 0))
-    change_neighbour(bestfit, bestfit - width - 1, r, g, b, width, vec);
-
-  if ((bestfit % width != width - 1) && (bestfit / height != 0))
-    change_neighbour(bestfit, bestfit - width + 1, r, g, b, width, vec);
-
-  if ((bestfit % width != 0) && (bestfit / height != height - 1))
-    change_neighbour(bestfit, bestfit + width - 1, r, g, b, width, vec);
-
-  if ((bestfit % width != width - 1) && (bestfit / height != height - 1))
-    change_neighbour(bestfit, bestfit + width + 1, r, g, b, width, vec);
+  for (int num_node = 0; num_node < vec.size(); num_node++)
+    update_node(bestfit, num_node, r, g, b, width, height, vec);
 
   return vec;
 }
