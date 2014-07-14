@@ -63,11 +63,7 @@ static void update_node(int bestfit, int num_node,
   if (blue < 0.f)
     blue = 0;
 
-  int r = round(red);
-  int g = round(green);
-  int b = round(blue);
-
-  change_color(vec[num_node], r, g, b);
+  change_color(vec[num_node], (int)red, (int)green, (int)blue);
 }
 
 
