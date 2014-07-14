@@ -82,7 +82,7 @@ void display(std::vector<Node> vec, int width, int height)
   for (int i = 0; i < width * height; i++)
   {
     *pix[dim] = {NULL};
-    pix[i] = SDL_CreateRGBSurface(SDL_HWSURFACE, 1, 1, 32, 0, 0, 0, 0);
+    pix[i] = SDL_CreateRGBSurface(0, 1, 1, 32, 0, 0, 0, 0);
   }
 
   SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
@@ -121,11 +121,17 @@ int search_closer(Uint8 r, Uint8 g, Uint8 b, std::vector<Node> vec)
   return pos;
 }
 
-std::vector<Node> calculate(char* file, std::vector<Node> vec, int width, int height)
+std::vector<Node> calculate(char* file, std::vector<Node> vec, int width,
+                            int height, int iteration_nb)
 {
+  std::cout << "DEBUG main.cc: calculate: begin of fct" << std::endl;
+
   SDL_Surface *img = NULL;
   SDL_Init(SDL_INIT_VIDEO);
   img = SDL_LoadBMP(file);
+
+  std::cout << "DEBUG main.cc: calculate: after image loading"
+            << ". Img vals " << img << std::endl;
 
   Uint32 current_pix = 0;
 
@@ -135,24 +141,31 @@ std::vector<Node> calculate(char* file, std::vector<Node> vec, int width, int he
 
   int bestfit;
 
-  std::vector<int> vecint = get_random_suite(width * height, width * height);
+  std::vector<int> vecint = get_random_suite(width * height, iteration_nb);
+
+  std::cout << "DEBUG main.cc: calculate: after random vector of pixels"
+            << std::endl;
 
   for (int i = 0; i < vecint.size(); i++)
   {
+    std::cout << "iteration number: " << i << " - max iteration: "
+              << iteration_nb << std::endl;
+
     current_pix = getpixel(img, vecint[i] / height, vecint[i] % height);
-    SDL_GetRGB(current_pix, NULL, &r, &g, &b);
+    SDL_GetRGB(current_pix, img->format, &r, &g, &b);
     bestfit = search_closer(r, g, b, vec);
-    // update here
-    update(width, height, bestfit, current_pix, vec);
+    // begin fixme: allemo_n
+    update(width, height, bestfit, r, g, b, vec);
+    // end fixme
   }
   return vec;
 }
 
 int main(int argc, char** argv)
 {
-  if (argc != 4)
+  if (argc != 5)
   {
-    std::cout << "using: Filename dimx dimy" << std::endl;
+    std::cout << "using: Filename dimx dimy nb_iteration" << std::endl;
     return 1;
   }
 
@@ -160,9 +173,11 @@ int main(int argc, char** argv)
 
   int height = atoi(argv[3]);
 
+  int iteration_nb = atoi(argv[4]);
+
   std::vector<Node> vecNode = init_node(width, height);
 
-  vecNode = calculate(argv[1], vecNode, width, height);
+  vecNode = calculate(argv[1], vecNode, width, height, iteration_nb);
 
   display(vecNode, width, height);
 }
