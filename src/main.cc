@@ -48,7 +48,7 @@ std::vector<Node> init_node(int width, int height)
   return ret;
 }
 
-void pause()
+void my_pause()
 {
   int continuer = 1;
   SDL_Event event;
@@ -98,7 +98,7 @@ void display(std::vector<Node> vec, int width, int height)
     }
   }
   SDL_Flip(ecran);
-  pause();
+  my_pause();
   for (int i = 0 ; i < width * height; i++)
     SDL_FreeSurface(pix[i]);
   SDL_Quit();

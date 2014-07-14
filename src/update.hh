@@ -5,6 +5,6 @@
 # include <cmath>
 
 void update(int width, int height, int bestfit, Uint32 current_pix,
-            std::vector<Node>& map)
+            std::vector<Node>& map);
 
 #endif /* !UPDATE_HH */

@@ -1,4 +1,4 @@
-CXX?=g++
+CXX=g++
 CPPFLAGS=-I/usr/local/include -Isrc
 CXXFLAGS=-Wall -pedantic -Wextra -std=c++11 -g3 `sdl-config --cflags` `pkg-config --cflags --libs SDL_image``pkg-config --cflags --libs SDL_mixer`
 BIN=prpa
