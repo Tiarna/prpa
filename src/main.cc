@@ -48,7 +48,7 @@ std::vector<Node> init_node(int width, int height)
   return ret;
 }
 
-void pause()
+void my_pause()
 {
   int continuer = 1;
   SDL_Event event;
@@ -98,7 +98,7 @@ void display(std::vector<Node> vec, int width, int height)
     }
   }
   SDL_Flip(ecran);
-  pause();
+  my_pause();
   for (int i = 0 ; i < width * height; i++)
     SDL_FreeSurface(pix[i]);
   SDL_Quit();
@@ -142,6 +142,8 @@ std::vector<Node> calculate(char* file, std::vector<Node> vec, int width, int he
     current_pix = getpixel(img, vecint[i] / height, vecint[i] % height);
     SDL_GetRGB(current_pix, NULL, &r, &g, &b);
     bestfit = search_closer(r, g, b, vec);
+    // update here
+    update(width, height, bestfit, current_pix, vec);
   }
   return vec;
 }

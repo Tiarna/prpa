@@ -1,8 +1,8 @@
-CXX?=g++
+CXX=g++
 CPPFLAGS=-I/usr/local/include -Isrc
 CXXFLAGS=-Wall -pedantic -Wextra -std=c++11 -g3 `sdl-config --cflags` `pkg-config --cflags --libs SDL_image``pkg-config --cflags --libs SDL_mixer`
 BIN=prpa
-SRC=src/main.cc src/node.cc src/random_suite.cc
+SRC=src/main.cc src/node.cc src/random_suite.cc src/update.cc
 OBJ=$(SRC:.cc=.o)
 LOGIN=morle_g
 TARPREFIX=--prefix=$(LOGIN)-$(BIN)/
