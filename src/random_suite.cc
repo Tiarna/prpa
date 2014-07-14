@@ -23,6 +23,28 @@ random_uniform_suite(int px_min, int px_max, int size)
   return suite;
 }
 
+/** regular step : inutil **/
+/*
+static std::vector<int>
+random_uniform_suite(int inutil, int px_nb, int sample_nb)
+{
+  inutil = inutil;
+  px_nb++;
+
+  int px = 0;
+  std::vector<int> suite;
+  int count = 0;
+
+  while ((px < px_nb) && (count <= sample_nb))
+  {
+    suite.push_back(px);
+    px = px + (px_nb / sample_nb);
+    count++;
+  }
+
+  return suite;
+}
+*/
 
 std::vector<int> get_random_suite(int px_nb, int sample_nb)
 {
