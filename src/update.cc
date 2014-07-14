@@ -105,5 +105,4 @@ void update(int width, int height, int bestfit, Uint8 r, Uint8 g, Uint8 b,
 
   if ((bestfit % width != width - 1) && (bestfit / height != height - 1))
     change_neighbour(bestfit, bestfit + width + 1, r, g, b, width, vec);
-
 }
