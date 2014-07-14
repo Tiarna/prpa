@@ -109,7 +109,7 @@ int search_closer(Uint8 r, Uint8 g, Uint8 b, std::vector<Node> vec)
   int min = 196000;
   int tmp;
   int pos;
-  for (int i = 0; i < vec.size(); i++)
+  for (unsigned int i = 0; i < vec.size(); i++)
   {
     tmp = vec[i].dist2(r, g, b);
     if (min > tmp)
@@ -137,7 +137,7 @@ std::vector<Node> calculate(char* file, std::vector<Node> vec, int width, int he
 
   std::vector<int> vecint = get_random_suite(width * height, width * height);
 
-  for (int i = 0; i < vecint.size(); i++)
+  for (unsigned int i = 0; i < vecint.size(); i++)
   {
     current_pix = getpixel(img, vecint[i] / height, vecint[i] % height);
     SDL_GetRGB(current_pix, NULL, &r, &g, &b);
