@@ -3,7 +3,7 @@
 
 /*** neighbourhood function ***/
 
-static float dist_nodes(int bestfit, int num_node, int width, int height)
+static float dist_nodes(int bestfit, int num_node, int width)
 {
   int x_bestfit = bestfit % width;
   int y_bestfit = bestfit / width;
@@ -17,11 +17,11 @@ static float dist_nodes(int bestfit, int num_node, int width, int height)
   return sqrt(pow(delta_x, 2) + pow(delta_y, 2));
 }
 
-static float neighbourhood(int bestfit, int num_node, int width, int height)
+static float neighbourhood(int bestfit, int num_node, int width)
 {
   float action_range = 1.0;
 
-  return exp(- dist_nodes(bestfit, num_node, width, height)
+  return exp(- dist_nodes(bestfit, num_node, width)
              / (2 * pow(action_range, 2)));
 }
 
@@ -48,7 +48,7 @@ static void change_bestfit(int bestfit, Uint32 current_pix,
 }
 
 static void change_neighbour(int bestfit, int num_node, Uint32 current_pix,
-                             int width, int height, std::vector<Node>& vec)
+                             int width, std::vector<Node>& vec)
 {
   float learning_rate = 0.15;
 
@@ -59,20 +59,20 @@ static void change_neighbour(int bestfit, int num_node, Uint32 current_pix,
   SDL_GetRGB(current_pix, NULL, &r_px, &g_px, &b_px);
 
   float red = vec[num_node].getR()
-    + learning_rate * neighbourhood(bestfit, num_node, width, height)
+    + learning_rate * neighbourhood(bestfit, num_node, width)
     * (r_px -  vec[num_node].getR());
 
   float green = vec[num_node].getG()
-    + learning_rate * neighbourhood(bestfit, num_node, width, height)
+    + learning_rate * neighbourhood(bestfit, num_node, width)
     * (g_px -  vec[num_node].getG());
 
   float blue = vec[num_node].getB()
-    + learning_rate * neighbourhood(bestfit, num_node, width, height)
+    + learning_rate * neighbourhood(bestfit, num_node, width)
     * (b_px -  vec[num_node].getB());
 
-  (red < 0.f) ? 0.f : red;
-  (green < 0.f) ? 0.f : green;
-  (blue < 0.f) ? 0.f : blue;
+  red = (red < 0.f) ? 0.f : red;
+  green = (green < 0.f) ? 0.f : green;
+  blue = (blue < 0.f) ? 0.f : blue;
 
   int r = round(red);
   int g = round(green);
@@ -91,28 +91,28 @@ void update(int width, int height, int bestfit, Uint32 current_pix,
 
   // adjacent neighbours change
   if (bestfit % width != 0)
-    change_neighbour(bestfit, bestfit - 1, current_pix, width, height, vec);
+    change_neighbour(bestfit, bestfit - 1, current_pix, width, vec);
 
   if (bestfit % width != (width - 1))
-    change_neighbour(bestfit, bestfit + 1, current_pix, width, height, vec);
+    change_neighbour(bestfit, bestfit + 1, current_pix, width, vec);
 
   if (bestfit / height != 0)
-    change_neighbour(bestfit, bestfit - width, current_pix, width, height, vec);
+    change_neighbour(bestfit, bestfit - width, current_pix, width, vec);
 
   if (bestfit / height != (height - 1))
-    change_neighbour(bestfit, bestfit + width, current_pix, width, height, vec);
+    change_neighbour(bestfit, bestfit + width, current_pix, width, vec);
 
   // far neighbours change
   if ((bestfit % width != 0) && (bestfit / height != 0))
-    change_neighbour(bestfit, bestfit - width - 1, current_pix, width, height, vec);
+    change_neighbour(bestfit, bestfit - width - 1, current_pix, width, vec);
 
   if ((bestfit % width != width - 1) && (bestfit / height != 0))
-    change_neighbour(bestfit, bestfit - width + 1, current_pix, width, height, vec);
+    change_neighbour(bestfit, bestfit - width + 1, current_pix, width, vec);
 
   if ((bestfit % width != 0) && (bestfit / height != height - 1))
-    change_neighbour(bestfit, bestfit + width - 1, current_pix, width, height, vec);
+    change_neighbour(bestfit, bestfit + width - 1, current_pix, width, vec);
 
   if ((bestfit % width != width - 1) && (bestfit / height != height - 1))
-    change_neighbour(bestfit, bestfit + width + 1, current_pix, width, height, vec);
+    change_neighbour(bestfit, bestfit + width + 1, current_pix, width, vec);
 
 }
