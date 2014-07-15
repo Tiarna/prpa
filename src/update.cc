@@ -1,5 +1,5 @@
 # include "update.hh"
-
+#include <iostream>
 
 /*** neighbourhood function ***/
 
