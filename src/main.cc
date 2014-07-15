@@ -81,7 +81,7 @@ void display(std::vector<Node> vec, int width, int height)
 
   for (int i = 0; i < width * height; i++)
   {
-    *pix[dim] = {NULL};
+    //*pix[dim] = {NULL};
     pix[i] = SDL_CreateRGBSurface(0, 1, 1, 32, 0, 0, 0, 0);
   }
 
@@ -142,80 +142,83 @@ std::vector<Node> calculate_seq(char* file, std::vector<Node> vec, int width,
   int bestfit;
 
   std::vector<int> vecint = get_random_suite(width * height, iteration_nb);
-
-  //  std::cout << "DEBUG main.cc: calculate: after random vector of pixels"
-  //            << std::endl;
-
+  std::vector<Node> ret = vec;
   double par_time;
   {
     timer t(par_time);
 
     for (unsigned int i = 0; i < vecint.size(); i++)
     {
-      //    std::cout << "iteration number: " << i << " - max iteration: "
-      //              << iteration_nb << std::endl;
-
       current_pix = getpixel(img, vecint[i] / height, vecint[i] % height);
       SDL_GetRGB(current_pix, img->format, &r, &g, &b);
       bestfit = search_closer(r, g, b, vec);
-      // begin fixme: allemo_n
-      vec = update(width, height, bestfit, r, g, b, vec);
-      // end fixme
+      ret = update(width, height, bestfit, r, g, b, vec);
     }
   }
   std::cout << "Sequential time: \t" << par_time << std::endl;
 
-  return vec;
+  return ret;
 }
 
-apply_par()
+class apply_par
 {
-Uint8 r = 0;
-  Uint8 g = 0;
-  Uint8 b = 0;
+  public:
+    void operator()(const tbb::blocked_range<size_t>& rank) const
+    {
+      Uint32 current_pix = 0;
 
-}
+      Uint8 r = 0;
+      Uint8 g = 0;
+      Uint8 b = 0;
+      int bestfit;
+
+      for(size_t i = rank.begin(); i != rank.end(); i++)
+      {
+        std::vector<Node> t = vec;
+        current_pix = getpixel(img, vecint[i] / height, vecint[i] % height);
+        SDL_GetRGB(current_pix, img->format, &r, &g, &b);
+        bestfit = search_closer(r, g, b, vec);
+        ret = update(width, height, bestfit, r, g, b, t);
+      }
+    }
+
+    apply_par(char* file, std::vector<Node>& v, int w, int h, int it, std::vector<int> vt)
+      :vec(v), width(w), height(h), iteration_nb(it), vecint(vt), ret(v)
+    {
+      SDL_Init(SDL_INIT_VIDEO);
+      img = SDL_LoadBMP(file);
+    }
+
+    std::vector<Node> getvec()
+    {
+      return ret;
+    }
+
+  private:
+    SDL_Surface *img = NULL;
+    std::vector<int> vecint;
+
+    char* file;
+    std::vector<Node>& vec;
+    int width;
+    int height;
+    int iteration_nb;
+    std::vector<Node>& ret;
+};
 
 std::vector<Node> calculate_par(char* file, std::vector<Node> vec, int width,
     int height, int iteration_nb)
 {
-  //  std::cout << "DEBUG main.cc: calculate: begin of fct" << std::endl;
-
-  SDL_Surface *img = NULL;
-  SDL_Init(SDL_INIT_VIDEO);
-  img = SDL_LoadBMP(file);
-
-  //  std::cout << "DEBUG main.cc: calculate: after image loading"
-  //            << ". Img vals " << img << std::endl;
-
-  Uint32 current_pix = 0;
-
-  Uint8 r = 0;
-  Uint8 g = 0;
-  Uint8 b = 0;
-
-  int bestfit;
-
   std::vector<int> vecint = get_random_suite(width * height, iteration_nb);
-
-  //  std::cout << "DEBUG main.cc: calculate: after random vector of pixels"
-  //            << std::endl;
-
+  apply_par app = apply_par(file, vec, width, height, iteration_nb, vecint);
   double par_time;
   {
     timer t(par_time);
-
-    for (unsigned int i = 0; i < vecint.size(); i++)
-    {
-      current_pix = getpixel(img, vecint[i] / height, vecint[i] % height);
-      SDL_GetRGB(current_pix, img->format, &r, &g, &b);
-      bestfit = search_closer(r, g, b, vec);
-      vec = update(width, height, bestfit, r, g, b, vec);
-    }
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, vecint.size()), app);
   }
   std::cout << "Parallel time: \t" << par_time << std::endl;
 
-  return vec;
+  return app.getvec();
 }
 int main(int argc, char** argv)
 {
@@ -233,11 +236,9 @@ int main(int argc, char** argv)
 
   std::vector<Node> vecNode_seq = init_node(width, height);
 
-  std::vector<Node> vecNode_pat = vecNode_seq;
+  std::vector<Node> vecNode_par = init_node(width, height);
 
-  display(vecNode, width, height);
-
-  vecNode_sec = calculate_seq(argv[1], vecNode_sec, width, height, iteration_nb);
+  vecNode_seq = calculate_seq(argv[1], vecNode_seq, width, height, iteration_nb);
 
   display(vecNode_seq, width, height);
 

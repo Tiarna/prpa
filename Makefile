@@ -1,4 +1,4 @@
-CXX=g++
+CXX=g++ -pthread
 CPPFLAGS=-I/usr/local/include -Isrc
 CXXFLAGS=-Wall -pedantic -Wextra -std=c++11 -g3 `sdl-config --cflags` `pkg-config --cflags --libs SDL_image``pkg-config --cflags --libs SDL_mixer`
 BIN=prpa
@@ -7,11 +7,17 @@ OBJ=$(SRC:.cc=.o)
 LOGIN=morle_g
 TARPREFIX=--prefix=$(LOGIN)-$(BIN)/
 TARBALL=$(LOGIN)-$(BIN).tar.bz2
+# Adding /usr/local/lib for FreeBSD
+LDFLAGS= -L/usr/local/lib
+
+# libs flags
+LDLIBS= -lrt -ltbb
+
 
 all: $(BIN)
 
 $(BIN): $(OBJ)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $^
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) ${LDFLAGS} ${LDLIBS} -o $@ $^
 
 check:
 
