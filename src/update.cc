@@ -14,17 +14,14 @@ static float dist_nodes(int bestfit, int num_node, int width)
   int delta_x = x_node - x_bestfit;
   int delta_y = y_node - y_bestfit;
 
-  return (float) (pow(delta_x, 2) + pow(delta_y, 2));
+  return sqrt(pow(delta_x, 2) + pow(delta_y, 2));
 }
 
 static float neighbourhood(int bestfit, int num_node, int width, int height)
 {
-  float action_range = std::min(width, height) / 2;
+  float action_range = std::min(width, height) / 4;
 
-  //return exp(- dist_nodes(bestfit, num_node, width)
-  //           / (2 * pow(action_range, 2)));
-
-  return exp(- dist_nodes(bestfit, num_node, width)
+  return exp(- pow(dist_nodes(bestfit, num_node, width), 2)
              / (2 * pow(action_range, 2)));
 }
 
@@ -42,7 +39,7 @@ static void update_node(int bestfit, int num_node,
                         Uint8 r_px, Uint8 g_px, Uint8 b_px,
                         int width, int height, std::vector<Node>& vec)
 {
-  float learning_rate = 0.1;
+  float learning_rate = 0.2;
 
   float red = vec[num_node].getR()
     + learning_rate * neighbourhood(bestfit, num_node, width, height)
