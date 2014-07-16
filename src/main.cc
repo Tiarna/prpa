@@ -1,10 +1,9 @@
 #include "main.hh"
 
-Uint32 getpixel(SDL_Surface *surface, int x, int y)
+/*Uint32 getpixel(SDL_Surface *surface, int x, int y)
 {
   int bpp = surface->format->BytesPerPixel;
-  /* Here p is the address to the pixel we want to retrieve */
-  Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+   Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
 
   switch(bpp) {
     case 1:
@@ -27,9 +26,15 @@ Uint32 getpixel(SDL_Surface *surface, int x, int y)
       break;
 
     default:
-      return 0;       /* shouldn't happen, but avoids warnings */
+      return 0;
   }
+}*/
+
+unsigned int getpixel(SDL_Surface *s, int x, int y)
+{
+  return ((unsigned int*)s->pixels)[y*(s->pitch/sizeof(unsigned int)) + x];
 }
+
 
 std::vector<Node> init_node(int width, int height)
 {
