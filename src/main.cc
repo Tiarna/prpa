@@ -127,7 +127,7 @@ int search_closer(Uint8 r, Uint8 g, Uint8 b, std::vector<Node> vec)
 }
 
 std::vector<Node> calculate_seq(char* file, std::vector<Node> vec, int width,
-    int height, int iteration_nb, std::vector<int> vecint)
+    int height, std::vector<int> vecint)
 {
   //  std::cout << "DEBUG main.cc: calculate: begin of fct" << std::endl;
 
@@ -241,7 +241,7 @@ int main(int argc, char** argv)
   std::vector<Node> vecNode_par = vecNode_seq;
   std::vector<int> vecint = get_random_suite(width * height, iteration_nb);
 
-  vecNode_seq = calculate_seq(argv[1], vecNode_seq, width, height, iteration_nb, vecint);
+  vecNode_seq = calculate_seq(argv[1], vecNode_seq, width, height, vecint);
 
   display(vecNode_seq, width, height);
 

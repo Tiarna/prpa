@@ -35,7 +35,7 @@ static void change_color(Node& node, Uint8 R, Uint8 G, Uint8 B)
   node.setB(B);
 }
 
-static void update_node(int bestfit, int num_node,
+static void update_node(int bestfit, unsigned int num_node,
                         Uint8 r_px, Uint8 g_px, Uint8 b_px,
                         int width, int height, std::vector<Node>& vec)
 {
@@ -70,7 +70,7 @@ std::vector<Node> update(int width, int height, int bestfit,
                          Uint8 r, Uint8 g, Uint8 b,
                          std::vector<Node>& vec)
 {
-  for (int num_node = 0; num_node < vec.size(); num_node++)
+  for (unsigned int num_node = 0; num_node < vec.size(); num_node++)
     update_node(bestfit, num_node, r, g, b, width, height, vec);
 
   return vec;

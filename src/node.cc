@@ -49,30 +49,30 @@ Uint8 Node::getB()
 
 void Node::setR(Uint8 r)
 {
-  if (r > 255)
+  /*if (r > 255)
     R = 255;
   else if (r < 0)
     R = 0;
-  else
+  else*/
     R = r;
 }
 
 void Node::setG(Uint8 g)
 {
-  if (g > 255)
+  /*if (g > 255)
     G = 255;
   else if (g < 0)
     G = 0;
-  else
+  else*/
     G = g;
 }
 
 void Node::setB(Uint8 b)
 {
-  if (b > 255)
+  /*if (b > 255)
     B = 255;
   else if (b < 0)
     B = 0;
-  else
+  else*/
     B = b;
 }
