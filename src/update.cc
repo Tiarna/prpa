@@ -14,21 +14,21 @@ static float dist_nodes(int bestfit, int num_node, int width)
   int delta_x = x_node - x_bestfit;
   int delta_y = y_node - y_bestfit;
 
-  return sqrt(pow(delta_x, 2) + pow(delta_y, 2));
+  return delta_x * delta_x + delta_y * delta_y;
 }
 
 static float neighbourhood(int bestfit, int num_node, int width, int height)
 {
-  float action_range = std::min(width, height) / 4;
+  float action_range = (width + height) / 4;
 
-  return exp(- pow(dist_nodes(bestfit, num_node, width), 2)
+  return exp(- dist_nodes(bestfit, num_node, width)
              / (2 * pow(action_range, 2)));
 }
 
 
 /*** change functions ***/
 
-static void change_color(Node& node, int R, int G, int B)
+static void change_color(Node& node, Uint8 R, Uint8 G, Uint8 B)
 {
   node.setR(R);
   node.setG(G);
@@ -41,15 +41,15 @@ static void update_node(int bestfit, int num_node,
 {
   float learning_rate = 0.2;
 
-  float red = vec[num_node].getR()
+  Uint8 red = vec[num_node].getR()
     + learning_rate * neighbourhood(bestfit, num_node, width, height)
     * (r_px -  vec[num_node].getR());
 
-  float green = vec[num_node].getG()
+  Uint8 green = vec[num_node].getG()
     + learning_rate * neighbourhood(bestfit, num_node, width, height)
     * (g_px -  vec[num_node].getG());
 
-  float blue = vec[num_node].getB()
+  Uint8 blue = vec[num_node].getB()
     + learning_rate * neighbourhood(bestfit, num_node, width, height)
     * (b_px -  vec[num_node].getB());
 
@@ -60,7 +60,7 @@ static void update_node(int bestfit, int num_node,
   if (blue < 0.f)
     blue = 0;
 
-  change_color(vec[num_node], (int)red, (int)green, (int)blue);
+  change_color(vec[num_node], red, green, blue);
 }
 
 

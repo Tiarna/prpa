@@ -26,28 +26,28 @@ Node::Node(int r, int g, int b)
 
 int Node::dist2(Uint8 r, Uint8 g, Uint8 b)
 {
-  int rR = ((int)r - R) * ((int)r - R);
-  int gG = ((int)g - G) * ((int)g - G);
-  int bB = ((int)b - B) * ((int)b - B);
+  int rR = ((int)r - (int)R) * ((int)r - (int)R);
+  int gG = ((int)g - (int)G) * ((int)g - (int)G);
+  int bB = ((int)b - (int)B) * ((int)b -(int) B);
   return rR + gG + bB;
 }
 
-int Node::getR()
+Uint8 Node::getR()
 {
   return R;
 }
 
-int Node::getG()
+Uint8 Node::getG()
 {
   return G;
 }
 
-int Node::getB()
+Uint8 Node::getB()
 {
   return B;
 }
 
-void Node::setR(int r)
+void Node::setR(Uint8 r)
 {
   if (r > 255)
     R = 255;
@@ -57,7 +57,7 @@ void Node::setR(int r)
     R = r;
 }
 
-void Node::setG(int g)
+void Node::setG(Uint8 g)
 {
   if (g > 255)
     G = 255;
@@ -67,7 +67,7 @@ void Node::setG(int g)
     G = g;
 }
 
-void Node::setB(int b)
+void Node::setB(Uint8 b)
 {
   if (b > 255)
     B = 255;

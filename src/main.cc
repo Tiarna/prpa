@@ -122,7 +122,7 @@ int search_closer(Uint8 r, Uint8 g, Uint8 b, std::vector<Node> vec)
 }
 
 std::vector<Node> calculate_seq(char* file, std::vector<Node> vec, int width,
-    int height, int iteration_nb)
+    int height, int iteration_nb, std::vector<int> vecint)
 {
   //  std::cout << "DEBUG main.cc: calculate: begin of fct" << std::endl;
 
@@ -141,7 +141,6 @@ std::vector<Node> calculate_seq(char* file, std::vector<Node> vec, int width,
 
   int bestfit;
 
-  std::vector<int> vecint = get_random_suite(width * height, iteration_nb);
   std::vector<Node> ret = vec;
   double par_time;
   {
@@ -207,9 +206,8 @@ class apply_par
 };
 
 std::vector<Node> calculate_par(char* file, std::vector<Node> vec, int width,
-    int height, int iteration_nb)
+    int height, int iteration_nb, std::vector<int> vecint)
 {
-  std::vector<int> vecint = get_random_suite(width * height, iteration_nb);
   apply_par app = apply_par(file, vec, width, height, iteration_nb, vecint);
   double par_time;
   {
@@ -235,14 +233,14 @@ int main(int argc, char** argv)
   int iteration_nb = atoi(argv[4]);
 
   std::vector<Node> vecNode_seq = init_node(width, height);
+  std::vector<Node> vecNode_par = vecNode_seq;
+  std::vector<int> vecint = get_random_suite(width * height, iteration_nb);
 
-  std::vector<Node> vecNode_par = init_node(width, height);
-
-  vecNode_seq = calculate_seq(argv[1], vecNode_seq, width, height, iteration_nb);
+  vecNode_seq = calculate_seq(argv[1], vecNode_seq, width, height, iteration_nb, vecint);
 
   display(vecNode_seq, width, height);
 
-  vecNode_par = calculate_par(argv[1], vecNode_par, width, height, iteration_nb);
+  vecNode_par = calculate_par(argv[1], vecNode_par, width, height, iteration_nb, vecint);
 
   display(vecNode_par, width, height);
 }
